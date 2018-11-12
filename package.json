@@ -1,0 +1,19 @@
+{
+  "name": "gleemod",
+  "version": "0.0.1",
+  "description": "this is a module for glee",
+  "main": "./src/index.js",
+  "author": "jonathan gee",
+  "license": "MIT",
+  "scripts": {
+	  "test":"jest"
+  },
+  "devDependencies": {
+    "eslint": "5.8.0",
+    "eslint-plugin-jest": "22.0.0",
+    "jest": "23.6.0"
+  },
+  "dependencies": {
+    "js-logger": "1.6.0"
+  }
+}
