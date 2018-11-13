@@ -41,6 +41,12 @@ module.exports = class
 		}
 	}
 
+	/**
+	 * Returns a Cell reference from the provided coords.
+	 * 
+	 * @param {int} columnIndex The X coord
+	 * @param {int} rowIndex The Y coord
+	 */
 	getItemByCoords(columnIndex,rowIndex)
 	{
 		const index = columnIndex + rowIndex * this.columns;
@@ -190,6 +196,8 @@ module.exports = class
 				a = [];
 			}
 		}
+
+		// Logger.info(retVal);
 
 		return retVal;
 	}

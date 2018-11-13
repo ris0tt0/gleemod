@@ -145,3 +145,268 @@ describe('testing match data',() =>
 		// expect();
 	});
 });
+
+describe('testing match data',() =>
+{
+	let c0,c1,c2,matches;
+
+	const rows = 4;
+	const columns = 3;
+	const itemTypes = [0,1];
+
+	const controller = new Controller(columns,rows,itemTypes);
+	/**
+	 * TODO use manuel mock.
+	 */
+	const model = new Model();
+	model.rows = rows;
+	model.columns = columns;
+	model.itemTypes = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+	// overwrite
+	controller.model = model;
+
+	beforeAll(() =>
+	{
+		c0 = [
+			new Cell(3),//(0,0)
+			new Cell(4),//(0,1)
+			new Cell(5),//(0,2)
+			new Cell(6),//(0,3)
+		];
+		c1 = [
+			new Cell(12),//(1,0)
+			new Cell(13),//(1,1)
+			new Cell(14),//(1,2)
+			new Cell(7),//(1,3)
+		];
+		c2 = [
+			new Cell(2),//(2,0)
+			new Cell(2),//(2,1)
+			new Cell(2),//(2,2)
+			new Cell(21),//(2,3)
+		];
+		model.items = [
+			c0[0],c1[0],c2[0],
+			c0[1],c1[1],c2[1],
+			c0[2],c1[2],c2[2],
+			c0[3],c1[3],c2[3],
+		];
+
+		matches = controller.checkForMatches();
+	});
+
+	test('correct data format',() =>
+	{
+		expect(matches).toBeInstanceOf(Object);
+	});
+
+	test('column matches replacement',() =>
+	{
+		let col,value,cell;
+		for( let entry of matches.entries())
+		{
+			col = entry[0];
+			value = entry[1];
+
+			for( let i = 0; i< value.indices.length;i++)
+			{
+				cell = model.getItemByCoords(col,value.indices[i]);
+				
+				expect(cell.cellType).toBe(value.replace[i]);
+			}
+		}
+	});
+});
+
+describe('testing match data',() =>
+{
+	let c0,c1,c2,matches;
+
+	const rows = 4;
+	const columns = 3;
+	const itemTypes = [0,1];
+
+	const controller = new Controller(columns,rows,itemTypes);
+	/**
+	 * TODO use manuel mock.
+	 */
+	const model = new Model();
+	model.rows = rows;
+	model.columns = columns;
+	model.itemTypes = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+	// overwrite
+	controller.model = model;
+
+	beforeEach(() =>
+	{
+		c0 = [
+			new Cell(1),//(0,0)
+			new Cell(2),//(0,1)
+			new Cell(3),//(0,2)
+			new Cell(4),//(0,3)
+		];
+		c1 = [
+			new Cell(5),//(1,0)
+			new Cell(6),//(1,1)
+			new Cell(7),//(1,2)
+			new Cell(8),//(1,3)
+		];
+		c2 = [
+			new Cell(8),//(2,0)
+			new Cell(9),//(2,1)
+			new Cell(0),//(2,2)
+			new Cell(11),//(2,3)
+		];
+		model.items = [
+			c0[0],c1[0],c2[0],
+			c0[1],c1[1],c2[1],
+			c0[2],c1[2],c2[2],
+			c0[3],c1[3],c2[3],
+		];
+
+		matches = controller.checkForMatches();
+	});
+
+	test('empty matches',() =>
+	{
+		expect(matches.size).toBe(0);
+	});
+});
+
+describe('testing match data remove matches',() =>
+{
+	let c0,c1,c2,matches;
+
+	const rows = 4;
+	const columns = 3;
+	const itemTypes = [0,1];
+
+	const controller = new Controller(columns,rows,itemTypes);
+	/**
+	 * TODO use manuel mock.
+	 */
+	const model = new Model();
+	model.rows = rows;
+	model.columns = columns;
+	model.itemTypes = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+	// overwrite
+	controller.model = model;
+
+	beforeEach(() =>
+	{
+		c0 = [
+			new Cell(1),//(0,0)
+			new Cell(1),//(0,1)
+			new Cell(1),//(0,2)
+			new Cell(3),//(0,3)
+		];
+		c1 = [
+			new Cell(2),//(1,0)
+			new Cell(2),//(1,1)
+			new Cell(2),//(1,2)
+			new Cell(3),//(1,3)
+		];
+		c2 = [
+			new Cell(4),//(2,0)
+			new Cell(4),//(2,1)
+			new Cell(4),//(2,2)
+			new Cell(3),//(2,3)
+		];
+		model.items = [
+			c0[0],c1[0],c2[0],
+			c0[1],c1[1],c2[1],
+			c0[2],c1[2],c2[2],
+			c0[3],c1[3],c2[3],
+		];
+
+		matches = controller.checkForMatches();
+	});
+
+	test('remove matches',() =>
+	{
+		Logger.info('remove matches');
+
+		controller.removeMatchesFromBoard();
+		matches = controller.checkForMatches();
+
+		expect(matches.size).toBe(0);
+	});
+});
+
+
+describe('testing match data remove matches',() =>
+{
+	let c0,c1,matches;
+
+	const rows = 10;
+	const columns = 2;
+	const itemTypes = [0,1,3,4,5,6];
+
+	const controller = new Controller(columns,rows,itemTypes);
+	/**
+	 * TODO use manuel mock.
+	 */
+	const model = new Model();
+	model.rows = rows;
+	model.columns = columns;
+	model.itemTypes = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+	// overwrite
+	controller.model = model;
+
+	beforeEach(() =>
+	{
+		c0 = [
+			new Cell(1),//(0,0)
+			new Cell(1),//(0,1)
+			new Cell(1),//(0,2)
+			new Cell(3),//(0,3)
+			new Cell(4),//(0,4)
+			new Cell(4),//(0,5)
+			new Cell(4),//(0,6)
+			new Cell(4),//(0,7)
+			new Cell(5),//(0,8)
+			new Cell(6),//(0,9)
+			new Cell(7),//(0,10)
+
+		];
+		c1 = [
+			new Cell(8),//(1,0)
+			new Cell(9),//(1,1)
+			new Cell(9),//(1,2)
+			new Cell(9),//(1,3)
+			new Cell(9),//(1,4)
+			new Cell(10),//(1,5)
+			new Cell(1),//(1,6)
+			new Cell(1),//(1,7)
+			new Cell(1),//(1,8)
+			new Cell(3),//(1,9)
+			new Cell(3),//(1,10)
+
+		];
+		model.items = [
+			c0[0],c1[0],
+			c0[1],c1[1],
+			c0[2],c1[2],
+			c0[3],c1[3],
+			c0[4],c1[4],
+			c0[5],c1[5],
+			c0[6],c1[6],
+			c0[7],c1[7],
+			c0[8],c1[8],
+			c0[9],c1[9],
+			c0[10],c1[10],
+		];
+
+		matches = controller.checkForMatches();
+	});
+
+	test('remove matches',() =>
+	{
+		Logger.info('remove matches');
+
+		controller.removeMatchesFromBoard();
+		matches = controller.checkForMatches();
+
+		expect(matches.size).toBe(0);
+	});
+});

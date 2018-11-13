@@ -3,6 +3,12 @@ const Model = require('./model');
 
 module.exports = class
 {
+	/**
+	 * CTOR
+	 * @param {int} columns The total number of columns
+	 * @param {int} rows The total number of rows
+	 * @param {Array} itemTypes A list of available cell item types
+	 */
 	constructor(columns,rows,itemTypes)
 	{
 		Logger.info('controller::constructor');
@@ -13,11 +19,23 @@ module.exports = class
 		this.model.itemTypes = itemTypes;
 	}
 
+	/**
+	 * Initialize the class.
+	 */
 	init()
 	{
 		Logger.info('controller::init');
+		this.model.initBoard();
+		this.model.randomizeItems();
 	}
 
+	/**
+	 * Swap cells in either TOP,BOTTOM,LEFT,RIGHT directions
+	 * 
+	 * @param {int} column The column coord
+	 * @param {int} row The row coord
+	 * @param {string} direction A direction in which to swap the (column,row)
+	 */
 	swap(column,row,direction)
 	{
 		let x = column;
@@ -40,13 +58,11 @@ module.exports = class
 		}
 
 		this.model.swap(column,row,x,y);
-
-		return this.checkForMatches();
 	}
 
-	checkForMatches()
+	findMatches(matches)
 	{
-		const matches = this.model.getMatches();
+		// Logger.info(matches);
 		const {columnMap,rowMap} = matches;
 
 		const retVal = new Map();
@@ -103,28 +119,51 @@ module.exports = class
 			);
 		});
 		// now add random replace cell types.
-		for(let values of retVal.values())
+		for(let entry of retVal.entries())
 		{
-			const length = values.indices.length;
-			values.replace = this.model.randomCellTypesList(length);
-			values.indices.sort();
-
-			// Logger.info(values);
+			const columnIndex = entry[0];
+			const value = entry[1];
+			const length = value.indices.length;
+			// get type infomrmation
+			const modelColumnTypes = this.model.getColumn(columnIndex).map( cell => cell.cellType);
+			value.replace = this.model.randomCellTypesList(length);
+			value.indices.sort();
+			//copy, reverse and remove items.
+			value.indices.concat()
+				.reverse()
+				.map( i => modelColumnTypes.splice(i,1));
+			// update the column model data
+			for(let entry2 of [...value.replace,...modelColumnTypes].entries())
+			{
+				// Logger.info(entry[0],entry[1]);
+				this.model.getItemByCoords(columnIndex,entry2[0]).cellType = entry2[1];
+			}
+			// Logger.info(columnIndex);
+			Logger.info(this.model.getColumn(columnIndex));
 		}
 
+		return retVal;
+	}
+
+	
+	checkForMatches()
+	{
+		const retVal = this.findMatches( this.model.getMatches());
+		// Logger.info(retVal);
 		return  retVal;
 	}
 
-	resetBoard()
+	getBoard()
 	{
-		const retVal =  new Promise( (reslove) =>
-		{
-			// randomize the board.
-			this.model.randomizeItems();
-			// return the board
-			reslove(this.model.getBoardColumnList());
-		});
+		return this.model.getBoardColumnList();
+	}
 
-		return retVal;
+	removeMatchesFromBoard()
+	{
+		let matches = this.checkForMatches();
+		while(matches.size > 0)
+		{
+			matches = this.checkForMatches();
+		}
 	}
 };
