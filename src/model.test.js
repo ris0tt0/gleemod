@@ -148,6 +148,22 @@ describe('results from model',() =>
 		expect(data[8].cellType).toBe(6);
 	});
 
+	test('column 0 match cell type data',() =>
+	{
+		let data = model.getColumnType(0);
+		expect.assertions(9);
+
+		expect(data[0]).toBe(1);
+		expect(data[1]).toBe(3);
+		expect(data[2]).toBe(3);
+		expect(data[3]).toBe(3);
+		expect(data[4]).toBe(2);
+		expect(data[5]).toBe(2);
+		expect(data[6]).toBe(2);
+		expect(data[7]).toBe(2);
+		expect(data[8]).toBe(6);
+	});
+
 	test('column 1 match data',() =>
 	{
 		let data = model.getColumn(1);
@@ -162,6 +178,22 @@ describe('results from model',() =>
 		expect(data[6].cellType).toBe(12);
 		expect(data[7].cellType).toBe(13);
 		expect(data[8].cellType).toBe(6);
+	});
+
+	test('column 1 match cell type data',() =>
+	{
+		let data = model.getColumnType(1);
+		expect.assertions(9);
+
+		expect(data[0]).toBe(7);
+		expect(data[1]).toBe(8);
+		expect(data[2]).toBe(9);
+		expect(data[3]).toBe(10);
+		expect(data[4]).toBe(2);
+		expect(data[5]).toBe(11);
+		expect(data[6]).toBe(12);
+		expect(data[7]).toBe(13);
+		expect(data[8]).toBe(6);
 	});
 	test('column 2 match data',() =>
 	{
@@ -385,5 +417,34 @@ describe('initialize new board with zero items',() =>
 	{
 		// Logger.info(model);
 		expect(model.items.length).toBe(column*row);
+	});
+});
+
+describe('random cell types list',() =>
+{
+	const model = new Model();
+
+	test('random return',() =>
+	{
+		let data = model.getRandomCellTypesList(5,[2,3,4,5,6]);
+		
+		expect(data.length).toBe(5);
+	});
+});
+
+describe('remove indices',() =>
+{
+	const model = new Model();
+
+	test('remove',() =>
+	{
+		const indices = [2,4];
+		const list = [1,2,3,4,5];
+		const expected = [1,2,4];
+
+		model.removeIndicesFromList(indices,list);
+		
+		expect(list.length).toBe(3);
+		expect(list).toMatchObject(expected);
 	});
 });

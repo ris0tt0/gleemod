@@ -88,9 +88,69 @@ module.exports = class
 	getMatches()
 	{
 		const retVal = new Map();
+		const {columnMap,rowMap} = this.model.getMatches();
+		let rows,cols,entry,entry2,map;
 
-		
+		for(entry of columnMap.entries())
+		{
+			// entry[0] is the column
+			rows = [];	
+			for(entry2 of entry[1])
+			{
+				// cell type that was found. for now ignore.
+				// entry2[0]
+				rows.push(entry2[1]);
+			}
 
-		return retVal();
+			if(!retVal.get(entry[0])) retVal.set(entry[0],{indices:[],replace:[]});
+			retVal.get(entry[0]).indices = this.model.flattenList(rows);
+		}
+
+		for(entry of rowMap.entries())
+		{
+			cols = [];
+			// entry[0] is the row
+			for(entry2 of entry[1])
+			{
+				// cell type is entry2[0]
+				cols.push(entry2[1]);
+			}
+			cols = this.model.flattenList(cols);
+			// Logger.info(entry[0],cols);
+			for( let colIndex of cols)
+			{
+				Logger.info(typeof colIndex);
+				if(!retVal.get(colIndex))
+				{
+					retVal.set(colIndex,{indices:[],replace:[]});
+				}
+				map = retVal.get(colIndex);
+				if( map.indices.indexOf(entry[0]) < 0)
+					map.indices.push(entry[0]);
+			}
+		}
+		// orgainize
+		for(entry of retVal.entries())
+		{
+			
+			let indices = entry[1].indices;
+			// sort the removed index
+			indices.sort();
+			// get current column
+			let column = this.model.getColumnType(entry[0]);
+			entry[1].oldColumn = column.concat();
+			// get replacement cell types.
+			let replace = this.model.getRandomCellTypesList(
+				entry[1].indices.length,
+				this.model.itemTypes);
+			// remove the items from the column
+			this.model.removeIndicesFromList(indices,column);
+			// new cell types
+			entry[1].replace = replace;
+			// new column data with replaced on top.
+			entry[1].column = [...replace,...column];
+		}
+
+		return retVal;
 	}
 };

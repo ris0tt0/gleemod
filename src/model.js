@@ -119,6 +119,18 @@ module.exports = class
 		return column;
 	}
 
+	getColumnType(columnIndex)
+	{
+		const column = [];
+
+		for(let rowIndex = 0; rowIndex<this.rows; rowIndex++)
+		{
+			column.push(this.getItemByCoords(columnIndex,rowIndex).cellType);
+		}
+
+		return column;
+	}
+
 	/**
 	 * Returns the row list.
 	 * @param {int} rowIndex 
@@ -151,33 +163,55 @@ module.exports = class
 	}
 
 	/**
+	 * Method to return an array list containing a random
+	 * amount of itemTypes.
+	 * 
+	 * @param {int} length Total length of returned array list
+	 * @param {Array} itemTypes List of items to be randomized in the 
+	 * returned list.
+	 */
+	getRandomCellTypesList(length,itemTypes)
+	{
+		// const retVal = new Array(length);
+		const typeAmountLimit = Math.floor(length/itemTypes.length);
+		let randomItems = [];
+
+		for( let type of itemTypes.values())
+		{
+			randomItems.push(new Array(typeAmountLimit).fill(type));
+		}
+
+		randomItems = this.flattenList(randomItems);
+		const oldLength = randomItems.length;
+
+		// set the list to correct legnth;
+		randomItems.length = length;
+		// shore up the end with pseudo random
+		randomItems.fill(
+			itemTypes[Math.floor(Math.random() * itemTypes.length)],
+			oldLength);
+
+		this.shuffleList(randomItems);
+
+		return randomItems;
+	}
+
+	/**
 	 * Radomizes each item's cell type in the game board.
 	 */
 	randomizeBoardItemCellTypes()
 	{
 		this.randomizeItems(this.items,this.itemTypes);
 	}
-
+	/**
+	 * Randomizes items:Cell[]
+	 * 
+	 * @param {Array} items 
+	 * @param {Array} itemTypes 
+	 */
 	randomizeItems(items,itemTypes)
 	{
-		const totalItems = items.length;
-		const amountLimit = Math.floor(totalItems/itemTypes.length);
-		let randomItems = [];
-		let holderList;
-
-		for( let type of itemTypes.values())
-		{
-			holderList = new Array(amountLimit).fill(type);
-			randomItems.push(holderList);
-		}
-
-		randomItems = this.flatten(randomItems);
-
-		const l = randomItems.length;
-		randomItems.length = totalItems;
-		randomItems.fill(1,l);
-
-		this.shuffleList(randomItems);
+		let randomItems = this.getRandomCellTypesList(items.length,itemTypes);
 
 		for( let entry of items.entries())
 		{
@@ -185,10 +219,15 @@ module.exports = class
 		}
 	}
 
-	flatten(input)
+	/**
+	 * Flattens an array list.
+	 * 
+	 * @param {Array} input 
+	 */
+	flattenList(input)
 	{
 		const stack = [...input];
-		const res = [];
+		const retVal = [];
 		while (stack.length)
 		{
 			const next = stack.pop();
@@ -198,12 +237,16 @@ module.exports = class
 			}
 			else
 			{
-				res.push(next);
+				retVal.push(next);
 			}
 		}
-		return res.reverse();
+		return retVal.reverse();
 	}
 
+	/**
+	 * Suffles items within an array list.
+	 * @param {Array} list 
+	 */
 	shuffleList(list)
 	{
 		for (let i = list.length - 1; i > 0; i--)
@@ -307,5 +350,20 @@ module.exports = class
 		}
 
 		return retVal;
+	}
+
+	/**
+	 * Removes items from array list.
+	 * @param {Array} indices Index list to remove.
+	 * @param {Array} list Array list to remove from.
+	 */
+	removeIndicesFromList(indices,list)
+	{
+		// indices.concat().reverse().map(i => list.splice(i,1));
+		// copy
+		// [2,3]
+		// reverse
+		// [3,2]
+		indices.concat().reverse().map(index => list.splice(index,1));
 	}
 };

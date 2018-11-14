@@ -79,7 +79,9 @@ describe('controller',() =>
 
 	test('',() =>
 	{
-		Logger.info(controller.model);
+		// Logger.info(controller.model);
+		controller.getMatches();
+
 		expect(1).toBe(1);
 	});
 });
