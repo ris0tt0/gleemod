@@ -118,7 +118,7 @@ module.exports = class
 				)
 			);
 		});
-		// now add random replace cell types.
+		// now add random replace cell types. and update the model column
 		for(let entry of retVal.entries())
 		{
 			const columnIndex = entry[0];
@@ -133,7 +133,8 @@ module.exports = class
 				.reverse()
 				.map( i => modelColumnTypes.splice(i,1));
 			// update the column model data
-			for(let entry2 of [...value.replace,...modelColumnTypes].entries())
+			value.column = [...value.replace,...modelColumnTypes];
+			for(let entry2 of value.column.entries())
 			{
 				// Logger.info(entry[0],entry[1]);
 				this.model.getItemByCoords(columnIndex,entry2[0]).cellType = entry2[1];

@@ -160,7 +160,7 @@ module.exports = class
 	{
 		const a = new Array(length).fill(null);
 
-		return a.map(() => this.itemTypes[Math.floor(Math.random() * length)] );
+		return a.map(() => this.itemTypes[Math.round(Math.random() * length)] );
 	}
 
 	seachList(list,limit = NaN)
@@ -201,15 +201,4 @@ module.exports = class
 
 		return retVal;
 	}
-
-
-	// searchRowsAndColumns(startX,startY)
-	// {
-	// 	const rows = this.searchRows(startX,startY);
-	// 	const columns = this.searchColumns(startX,startY);
-	// 	const set = new Set([...rows,...columns]);
-
-	// 	// Logger.info(set);
-	// 	return set;
-	// }
 };
