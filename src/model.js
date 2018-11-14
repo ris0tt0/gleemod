@@ -3,32 +3,43 @@ const Cell = require('./cell');
 
 module.exports = class
 {
-	constructor()
+	constructor(row = 0,column = 0,matchLimit = 3,itemTypes = [],items = [])
 	{
 		Logger.info('model::constructor');
 
 		/**
 		 * Total number of rows
 		 */
-		this.rows = 0;
+		this.rows = row;
 		/**
 		 * Total number of columns
 		 */
-		this.columns = 0;
+		this.columns = column;
 		/**
 		 * Match limit, default is 3.
 		 */
-		this.matchLimit = 3;
+		this.matchLimit = matchLimit;
 		/** 
 		 * The different Item types
 		 */
-		this.itemTypes = [];
+		this.itemTypes = itemTypes;
 		/**
 		 * A list of items
 		 */
-		this.items = [];
+		this.items = items;
 	}
 
+	/**
+	 * Initializes the model
+	 */
+	init()
+	{
+		this.initBoard();
+	}
+
+	/**
+	 * Initialize the board
+	 */
 	initBoard()
 	{
 		Logger.info('model::initboard');
@@ -54,6 +65,10 @@ module.exports = class
 		return this.items[index];
 	}
 
+	/**
+	 * Returns the coord for the provided Cell instance.s
+	 * @param {Cell} cell 
+	 */
 	getItemCoord(cell)
 	{
 		const index = this.items.indexOf(cell);
@@ -61,6 +76,10 @@ module.exports = class
 		return this.getItemCoordByIndex(index);
 	}
 
+	/**
+	 * Returns the coord for the provided index.
+	 * @param {int} index 
+	 */
 	getItemCoordByIndex(index)
 	{
 		let x = index % this.rows;
@@ -69,6 +88,10 @@ module.exports = class
 		return {x,y};
 	}
 
+	/**
+	 * Returns the column list.
+	 * @param {int} columnIndex 
+	 */
 	getColumn(columnIndex)
 	{
 		const column = [];
@@ -81,6 +104,10 @@ module.exports = class
 		return column;
 	}
 
+	/**
+	 * Returns the row list.
+	 * @param {int} rowIndex 
+	 */
 	getRow(rowIndex)
 	{
 		const row = [];
@@ -93,6 +120,9 @@ module.exports = class
 		return row;
 	}
 
+	/**
+	 * Returns a list that contains columns in order.
+	 */
 	getBoardColumnList()
 	{
 		const board = [];
@@ -105,20 +135,23 @@ module.exports = class
 		return board;
 	}
 
-	randomizeItems()
+	/**
+	 * Radomizes each item's cell type in the game board.
+	 */
+	randomizeItemCellTypes()
 	{
 		this.items.forEach( item =>
 			item.cellType = this.itemTypes[Math.floor(Math.random() * this.itemTypes.length)]
 		);
 	}
 
-	swap(x1,y1,x2,y2)
+	swap(column1,row1,column2,row2)
 	{
 		/** TODO create and use setItem method
 		 * if more values are needed
 		*/
-		const item1 = this.getItemByCoords(x1,y1);
-		const item2 = this.getItemByCoords(x2,y2);
+		const item1 = this.getItemByCoords(column1,row1);
+		const item2 = this.getItemByCoords(column2,row2);
 
 		if(item1 && item2)
 		{
@@ -156,19 +189,21 @@ module.exports = class
 		return {columnMap,rowMap};
 	}
 
-	randomCellTypesList(length)
-	{
-		const a = new Array(length).fill(null);
+	// get(length)
+	// {
+	// 	const a = new Array(length).fill(null);
 
-		return a.map(() => this.itemTypes[Math.round(Math.random() * length)] );
-	}
+	// 	return a.map(() => this.itemTypes[Math.round(Math.random() * length)] );
+	// }
 
-	seachList(list,limit = NaN)
+	/**
+	 * Searches through a list to find items that have
+	 * the same celltype.
+	 */
+	seachList(list)
 	{
 		let c1,c2,a,i;
 		const retVal = new Map();
-		if(isNaN(limit)) limit = this.matchLimit;
-		
 
 		a = [];
 		for(i = 0;i<list.length;i++)
@@ -185,7 +220,7 @@ module.exports = class
 				{
 					a.push(i);
 				}
-				if( a.length > limit - 1)
+				if( a.length > this.matchLimit - 1)
 				{
 					if(!retVal.has(c1.cellType))
 					{
