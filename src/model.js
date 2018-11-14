@@ -35,6 +35,7 @@ module.exports = class
 	init()
 	{
 		this.initBoard();
+		this.randomizeBoardItemCellTypes();
 	}
 
 	/**
@@ -138,13 +139,21 @@ module.exports = class
 	/**
 	 * Radomizes each item's cell type in the game board.
 	 */
-	randomizeItemCellTypes()
+	randomizeBoardItemCellTypes()
 	{
 		this.items.forEach( item =>
 			item.cellType = this.itemTypes[Math.floor(Math.random() * this.itemTypes.length)]
 		);
 	}
 
+	/**
+	 * Finds and swaps cell types from the provided coords
+	 * 
+	 * @param {int} column1 item 1 x value
+	 * @param {int} row1 item 1 y value
+	 * @param {int} column2 item 2 x coord
+	 * @param {int} row2 item 2 y coord
+	 */
 	swap(column1,row1,column2,row2)
 	{
 		/** TODO create and use setItem method
@@ -164,6 +173,9 @@ module.exports = class
 		}
 	}
 
+	/**
+	 * Searches game board and returns any matches
+	 */
 	getMatches()
 	{
 		let i,map,rowList,columnList;
@@ -189,16 +201,11 @@ module.exports = class
 		return {columnMap,rowMap};
 	}
 
-	// get(length)
-	// {
-	// 	const a = new Array(length).fill(null);
-
-	// 	return a.map(() => this.itemTypes[Math.round(Math.random() * length)] );
-	// }
-
 	/**
 	 * Searches through a list to find items that have
 	 * the same celltype.
+	 * 
+	 * Returns a Map
 	 */
 	seachList(list)
 	{
