@@ -131,6 +131,17 @@ module.exports = class
 		return column;
 	}
 
+	updateColumnType(column,itemTypes)
+	{
+		for(let entry of itemTypes.entries())
+		{
+			let index = entry[0];
+			let type = entry[1];
+			
+			this.getColumn(column)[index].cellType = type;
+		}
+	}
+
 	/**
 	 * Returns the row list.
 	 * @param {int} rowIndex 

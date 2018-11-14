@@ -448,3 +448,60 @@ describe('remove indices',() =>
 		expect(list).toMatchObject(expected);
 	});
 });
+
+describe('update column',() =>
+{
+	const row = 9;
+	const column = 2;
+	const limit = 3;
+	const itemTypes = [2,3,4,5,6];
+
+	const c0 =
+	[
+		new Cell(1),//(0,0)
+		new Cell(3),//(0,1)
+		new Cell(3),//(0,2)
+		new Cell(3),//(0,3)
+		new Cell(2),//(0,4)
+		new Cell(2),//(0,5)
+		new Cell(2),//(0,6)
+		new Cell(2),//(0,7)
+		new Cell(6),//(0,8)
+	];
+	const c1 = 
+	[
+		new Cell(7),//(1,0)
+		new Cell(8),//(1,1)
+		new Cell(9),//(1,2)
+		new Cell(10),//(1,3)
+		new Cell(2),//(1,4)
+		new Cell(11),//(1,5)
+		new Cell(12),//(1,6)
+		new Cell(13),//(1,7)
+		new Cell(6),//(1,8)
+	];
+
+	const items = [
+		c0[0],c1[0],
+		c0[1],c1[1],
+		c0[2],c1[2],
+		c0[3],c1[3],
+		c0[4],c1[4],
+		c0[5],c1[5],
+		c0[6],c1[6],
+		c0[7],c1[7],
+		c0[8],c1[8],
+	];
+
+	const model = new Model(row,column,limit,itemTypes,items);
+
+	test('update column',() =>
+	{
+		const replace = [0,0,0,0,0,0,0,0,0];
+		expect(replace.length).toBe(c0.length);
+
+		model.updateColumnType(0,replace);
+
+		expect(model.getColumnType(0)).toMatchObject(replace);
+	});
+});

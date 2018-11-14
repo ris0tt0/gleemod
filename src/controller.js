@@ -132,7 +132,6 @@ module.exports = class
 		// orgainize
 		for(entry of retVal.entries())
 		{
-			
 			let indices = entry[1].indices;
 			// sort the removed index
 			indices.sort();
@@ -149,6 +148,8 @@ module.exports = class
 			entry[1].replace = replace;
 			// new column data with replaced on top.
 			entry[1].column = [...replace,...column];
+
+			this.model.updateColumnType(entry[0],entry[1].column);
 		}
 
 		return retVal;
