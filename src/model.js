@@ -27,6 +27,19 @@ module.exports = class
 		 * A list of items
 		 */
 		this.items = items;
+
+		if( this.items.length === 0)
+		{
+			Logger.info('items.length is 0');
+			this.init();
+		}
+
+		if( this.rows * this.columns !== this.items.length)
+		{
+			Logger.info(`rows ${this.rows} columns ${this.columns}`);
+			let expected = this.rows * this.columns;
+			throw new Error(`Mismatched rows*columns: ${expected} item.length:${this.items.length}`);
+		}
 	}
 
 	/**
@@ -73,6 +86,7 @@ module.exports = class
 	getItemCoord(cell)
 	{
 		const index = this.items.indexOf(cell);
+		Logger.info(`getItemCoord ${index}`);
 
 		return this.getItemCoordByIndex(index);
 	}
@@ -83,8 +97,8 @@ module.exports = class
 	 */
 	getItemCoordByIndex(index)
 	{
-		let x = index % this.rows;
-		let y = Math.floor(index/this.rows);
+		let x = index % (this.columns);
+		let y = Math.floor(index/(this.columns));
 
 		return {x,y};
 	}
@@ -141,9 +155,62 @@ module.exports = class
 	 */
 	randomizeBoardItemCellTypes()
 	{
-		this.items.forEach( item =>
-			item.cellType = this.itemTypes[Math.floor(Math.random() * this.itemTypes.length)]
-		);
+		this.randomizeItems(this.items,this.itemTypes);
+	}
+
+	randomizeItems(items,itemTypes)
+	{
+		const totalItems = items.length;
+		const amountLimit = Math.floor(totalItems/itemTypes.length);
+		let randomItems = [];
+		let holderList;
+
+		for( let type of itemTypes.values())
+		{
+			holderList = new Array(amountLimit).fill(type);
+			randomItems.push(holderList);
+		}
+
+		randomItems = this.flatten(randomItems);
+
+		const l = randomItems.length;
+		randomItems.length = totalItems;
+		randomItems.fill(1,l);
+
+		this.shuffleList(randomItems);
+
+		for( let entry of items.entries())
+		{
+			entry[1].cellType = randomItems[entry[0]];
+		}
+	}
+
+	flatten(input)
+	{
+		const stack = [...input];
+		const res = [];
+		while (stack.length)
+		{
+			const next = stack.pop();
+			if (Array.isArray(next))
+			{
+				stack.push(...next);
+			}
+			else
+			{
+				res.push(next);
+			}
+		}
+		return res.reverse();
+	}
+
+	shuffleList(list)
+	{
+		for (let i = list.length - 1; i > 0; i--)
+		{
+			const j = Math.floor(Math.random() * (i + 1));
+			[list[i], list[j]] = [list[j], list[i]];
+		}
 	}
 
 	/**
@@ -186,7 +253,7 @@ module.exports = class
 		for(i = 0; i<this.columns;++i)
 		{
 			columnList = this.getColumn(i);
-			map = this.seachList(columnList);
+			map = this.searchList(columnList);
 			if( map.size > 0) columnMap.set(i,map);
 
 		}
@@ -194,7 +261,7 @@ module.exports = class
 		for(i = 0; i<this.rows;++i)
 		{
 			rowList = this.getRow(i);
-			map = this.seachList(rowList);
+			map = this.searchList(rowList);
 			if(map.size > 0) rowMap.set(i,map);
 		}
 
@@ -207,7 +274,7 @@ module.exports = class
 	 * 
 	 * Returns a Map
 	 */
-	seachList(list)
+	searchList(list)
 	{
 		let c1,c2,a,i;
 		const retVal = new Map();
@@ -238,8 +305,6 @@ module.exports = class
 				a = [];
 			}
 		}
-
-		// Logger.info(retVal);
 
 		return retVal;
 	}

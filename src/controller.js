@@ -9,14 +9,12 @@ module.exports = class
 	 * @param {int} rows The total number of rows
 	 * @param {Array} itemTypes A list of available cell item types
 	 */
-	constructor(columns,rows,itemTypes)
+	constructor(model = new Model)
 	{
 		Logger.info('controller::constructor');
+		this.model = model;
 
-		this.model = new Model();
-		this.model.columns = columns;
-		this.model.rows = rows;
-		this.model.itemTypes = itemTypes;
+		this.init();
 	}
 
 	/**
@@ -25,8 +23,6 @@ module.exports = class
 	init()
 	{
 		Logger.info('controller::init');
-		this.model.initBoard();
-		this.model.randomizeItems();
 	}
 
 	/**
@@ -60,111 +56,41 @@ module.exports = class
 		this.model.swap(column,row,x,y);
 	}
 
-	findMatches(matches)
-	{
-		// Logger.info(matches);
-		const {columnMap,rowMap} = matches;
+	// checkForMatches()
+	// {
+	// 	const retVal = this.findMatches( this.model.getMatches());
+	// 	// Logger.info(retVal);
+	// 	return  retVal;
+	// }
 
-		const retVal = new Map();
-
-		/**
-		 * ColumnMap
-		 * key is column index
-		 * value is the search map.
-		 * 
-		 * RowMap
-		 * key: row index
-		 * value: search map
-		 * 
-		 * SearchMap
-		 * key: cell type
-		 * value: array of array of indices
-		 */
-
-		const addToRetVal = (column , row) =>
-		{
-			if( !retVal.get(column))
-			{
-				retVal.set(column,{indices:[],replace:[]});
-			}
-			retVal.get(column).indices.push(row);
-		};
-
-		// Logger.info('column');
-		// add column data
-		columnMap.forEach((searchMap,columnIndex) =>
-		{
-			// Logger.info(columnIndex,searchMap);
-			
-			searchMap.forEach( 
-				indices => indices.forEach(
-					indexList => indexList.forEach(
-						rowIndex => addToRetVal(columnIndex,rowIndex)
-					)
-				)
-			);
-		});
-
-		// Logger.info('row');
-		// add row data.
-		rowMap.forEach((searchMap,rowIndex) =>
-		{
-			// Logger.info(rowIndex,searchMap);
-			searchMap.forEach( 
-				indices => indices.forEach(
-					indexList => indexList.forEach(
-						colunmIndex => addToRetVal(colunmIndex,rowIndex)
-					)
-				)
-			);
-		});
-		// now add random replace cell types. and update the model column
-		for(let entry of retVal.entries())
-		{
-			const columnIndex = entry[0];
-			const value = entry[1];
-			const length = value.indices.length;
-			// get type infomrmation
-			const modelColumnTypes = this.model.getColumn(columnIndex).map( cell => cell.cellType);
-			value.replace = this.model.randomCellTypesList(length);
-			value.indices.sort();
-			//copy, reverse and remove items.
-			value.indices.concat()
-				.reverse()
-				.map( i => modelColumnTypes.splice(i,1));
-			// update the column model data
-			value.column = [...value.replace,...modelColumnTypes];
-			for(let entry2 of value.column.entries())
-			{
-				// Logger.info(entry[0],entry[1]);
-				this.model.getItemByCoords(columnIndex,entry2[0]).cellType = entry2[1];
-			}
-			// Logger.info(columnIndex);
-			Logger.info(this.model.getColumn(columnIndex));
-		}
-
-		return retVal;
-	}
-
-	
-	checkForMatches()
-	{
-		const retVal = this.findMatches( this.model.getMatches());
-		// Logger.info(retVal);
-		return  retVal;
-	}
-
-	getBoard()
+	getBoardColumnList()
 	{
 		return this.model.getBoardColumnList();
 	}
 
-	removeMatchesFromBoard()
+	getBoardColumn(columnIndex)
 	{
-		let matches = this.checkForMatches();
-		while(matches.size > 0)
-		{
-			matches = this.checkForMatches();
-		}
+		return this.model.getColumn(columnIndex);
+	}
+
+	/**
+	 * view controller.swaps(column,row)
+	 * view controller.getMatches()
+	 * MAP
+	 * keys are columns
+	 * value: {
+	 * 		column[1,2,3,4],
+	 * 		replacedIndices[1,2,3],
+	 * 		}
+	 * 
+	 */
+
+	getMatches()
+	{
+		const retVal = new Map();
+
+		
+
+		return retVal();
 	}
 };
