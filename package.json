@@ -6,7 +6,9 @@
   "author": "jonathan gee",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "debug": "webpack ---config ./webpack.debug.config.js",
+    "build": "webpack"
   },
   "devDependencies": {
     "eslint": "5.8.0",
