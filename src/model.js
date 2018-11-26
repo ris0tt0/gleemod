@@ -86,7 +86,7 @@ module.exports = class
 	getItemCoord(cell)
 	{
 		const index = this.items.indexOf(cell);
-		Logger.info(`getItemCoord ${index}`);
+		Logger.info(`model::getItemCoord ${index}`);
 
 		return this.getItemCoordByIndex(index);
 	}

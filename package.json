@@ -2,7 +2,7 @@
   "name": "gleemod",
   "version": "0.0.1",
   "description": "this is a module for glee",
-  "main": "index.js",
+  "main": "./dist/index-bin.js",
   "author": "jonathan gee",
   "license": "MIT",
   "scripts": {
@@ -14,8 +14,8 @@
     "eslint": "5.8.0",
     "eslint-plugin-jest": "22.0.0",
     "jest": "23.6.0",
-    "webpack": "^4.26.0",
-    "webpack-cli": "^3.1.2"
+    "webpack": "4.26.0",
+    "webpack-cli": "3.1.2"
   },
   "dependencies": {
     "js-logger": "1.6.0"

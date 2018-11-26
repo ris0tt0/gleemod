@@ -73,6 +73,11 @@ module.exports = class
 		return this.model.getColumn(columnIndex);
 	}
 
+	getBoardColumnType(columnIndex)
+	{
+		return this.model.getColumnType(columnIndex);
+	}
+
 	/**
 	 * view controller.swaps(column,row)
 	 * view controller.getMatches()
@@ -85,8 +90,67 @@ module.exports = class
 	 * 
 	 */
 
+	getMatchesForColumnMap(columnMap)
+	{
+		let entry,entry2,rows;
+
+		const retVal = new Map();
+
+		for(entry of columnMap.entries())
+		{
+			// entry[0] is the column
+			rows = [];	
+			for(entry2 of entry[1])
+			{
+				// cell type that was found. for now ignore.
+				// entry2[0]
+				rows.push(entry2[1]);
+			}
+
+			if(!retVal.get(entry[0])) retVal.set(entry[0],{indices:[],replace:[]});
+			retVal.get(entry[0]).indices = this.model.flattenList(rows);
+		}
+
+		return retVal;
+	}
+
+	getMatchesForRowMap(rowMap)
+	{
+		const retVal = new Map();
+		let entry,entry2,cols,map;
+		for(entry of rowMap.entries())
+		{
+			cols = [];
+			// entry[0] is the row
+			for(entry2 of entry[1])
+			{
+				// cell type is entry2[0]
+				cols.push(entry2[1]);
+			}
+			cols = this.model.flattenList(cols);
+			// Logger.info(entry[0],cols);
+			for( let colIndex of cols)
+			{
+				if(!retVal.get(colIndex))
+				{
+					retVal.set(colIndex,{indices:[],replace:[]});
+				}
+				map = retVal.get(colIndex);
+				if( map.indices.indexOf(entry[0]) < 0)
+					map.indices.push(entry[0]);
+			}
+		}
+		return retVal;
+	}
+
 	getMatches()
 	{
+		// const {columnMap,rowMap} = this.model.getMatches();
+
+		// const retVal = new Map(
+		// 	this.getMatchesForColumnMap(columnMap),
+		// 	this.getMatchesForRowMap(rowMap));
+
 		const retVal = new Map();
 		const {columnMap,rowMap} = this.model.getMatches();
 		let rows,cols,entry,entry2,map;
@@ -119,7 +183,6 @@ module.exports = class
 			// Logger.info(entry[0],cols);
 			for( let colIndex of cols)
 			{
-				Logger.info(typeof colIndex);
 				if(!retVal.get(colIndex))
 				{
 					retVal.set(colIndex,{indices:[],replace:[]});
@@ -151,7 +214,7 @@ module.exports = class
 
 			this.model.updateColumnType(entry[0],entry[1].column);
 		}
-
+		
 		return retVal;
 	}
 };
